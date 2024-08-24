@@ -7,7 +7,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
 
     path('', MovieListViewSet.as_view({'get': 'list', 'post': 'create'}), name='movie_list'),
-    path('<int:pk>/', MovieViewSet.as_view({'get': 'retrieve', 'put': 'update'}), name='movie_detail'),
+    path('<int:pk>/', MovieViewSet.as_view({'get': 'retrieve', 'put': 'update'}), name='movie_detail0'),
 
     path('user', UserProfileViewSet.as_view({'get': 'list', 'post': 'create'}), name='user_list'),
     path('user/<int:pk>/', UserProfileViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='user_detail'),
