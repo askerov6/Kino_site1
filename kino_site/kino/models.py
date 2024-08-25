@@ -31,6 +31,7 @@ class Director(models.Model):
         return f'{self.director_name}'
 
 
+
 class Actor(models.Model):
     actor_name = models.CharField(max_length=32)
     bio = models.TextField(null=True, blank=True)

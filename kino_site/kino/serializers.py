@@ -33,6 +33,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserProfileSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['username']
+
 
 class DirectorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,10 +45,23 @@ class DirectorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DirectorSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Director
+        fields = ['director_name', 'age']
+
+
+
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = '__all__'
+
+
+class ActorSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actor
+        fields = ['actor_name', 'age']
 
 
 class JanreSerializer(serializers.ModelSerializer):
@@ -66,32 +84,46 @@ class RatingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RatingSimpleSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Rating
+        fields = ['user','stars']
+
+
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
+    user = UserProfileSimpleSerializer()
     class Meta:
         model = Comment
         fields = '__all__'
 
 
+class CommentSimpleSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer()
+    created_data = serializers.DateTimeField(format=('%d-%m-%Y %H:%M'))
+    class Meta:
+        model = Comment
+        fields = ['user', 'text', 'created_data']
+
 
 class MovieSerializer(serializers.ModelSerializer):
     country = CountrySerializer(many=True, read_only=True)
-    ratings = RatingSerializer(many=True, read_only=True)
-    reviews = CommentSerializer(many=True, read_only=True)
+    ratings = RatingSimpleSerializer(many=True, read_only=True)
+    reviews = CommentSimpleSerializer(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField()
     year = serializers.DateField(format=('%Y'))
-    director = DirectorSerializer(many=True, read_only=True)
+    director = DirectorSimpleSerializer(many=True, read_only=True)
     janre = JanreSerializer(many=True, read_only=True)
-    actor = ActorSerializer(many=True, read_only=True)
+    actor = ActorSimpleSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
-        fields = '__all__'
+        fields = ['movie_name', 'year', 'country', 'janre', 'director', 'actor', 'average_rating', 'ratings', 'reviews']
 
 
     def get_average_rating(self, obj):
         return obj.get_average_rating()
-
 
 
 class MovieListSerializer(serializers.ModelSerializer):
@@ -106,7 +138,6 @@ class MovieListSerializer(serializers.ModelSerializer):
 
     def get_average_rating(self, obj):
         return obj.get_average_rating()
-
 
 
 class CartItemSerializer(serializers.ModelSerializer):
